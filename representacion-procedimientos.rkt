@@ -31,6 +31,9 @@
 (define (chip-nor) 
   (lambda () 'prim-nor))
 
+(define (chip-xnor) 
+  (lambda () 'prim-xnor))
+
 ;; Representación de un circuito simple usando procedimientos
 (define (simple-circuit inputs outputs chip)
   (lambda () (list 'simple-circuit inputs outputs (chip))))
@@ -49,18 +52,16 @@
 (define (circuit-chip circuit)
   (cadddr (circuit)))
 
-
 ;; -----------------------------------------------------------
 ;; Ejemplos de prueba
 ;; -----------------------------------------------------------
 
-;; Ejemplo 1: XOR
+;; Ejemplo 1: Circuito simple con XOR
 (define circuit-xor (simple-circuit '(INA INB) '(OUTA) chip-xor))
 
 ;; Pruebas del Ejemplo 1
-(circuit-inputs circuit-xor)  ; '(INA INB)
-(circuit-outputs circuit-xor) ; '(OUTA)
-
+(circuit-inputs circuit-xor)  ; => '(INA INB)
+(circuit-outputs circuit-xor) ; => '(OUTA)
 
 ;; Ejemplo 2: Circuito NAND con NOT
 (define circuit-nand-not
@@ -69,8 +70,8 @@
                          (simple-circuit '(TEMP) '(OUTA) chip-not))))
 
 ;; Pruebas del Ejemplo 2
-(circuit-inputs circuit-nand-not) ; '(INA INB)
-
+(circuit-inputs circuit-nand-not) ; => '(INA INB)
+(circuit-outputs circuit-nand-not) ; => '(OUTA)
 
 ;; Ejemplo 3: Circuito NOR en cadena
 (define circuit-nor-chain
@@ -79,8 +80,7 @@
                          (simple-circuit '(TEMP) '(OUTA) chip-nor))))
 
 ;; Pruebas del Ejemplo 3
-(circuit-outputs circuit-nor-chain) ; '(OUTA)
-
+(circuit-outputs circuit-nor-chain) ; => '(OUTA)
 
 ;; Ejemplo 4: Combinación de AND, XOR y OR
 (define circuit-combo
@@ -90,9 +90,8 @@
                          (simple-circuit '(INC IND) '(OUTB) chip-or))))
 
 ;; Pruebas del Ejemplo 4
-(circuit-inputs circuit-combo) ; '(INA INB INC IND)
-(circuit-outputs circuit-combo) ; '(OUTA OUTB)
-
+(circuit-inputs circuit-combo) ; => '(INA INB INC IND)
+(circuit-outputs circuit-combo) ; => '(OUTA OUTB)
 
 ;; Ejemplo 5: Circuito complejo con XOR y NAND
 (define circuit-complex-xor-nand
@@ -102,5 +101,4 @@
                          (simple-circuit '(TEMP1) '(OUTB) chip-nand))))
 
 ;; Pruebas del Ejemplo 5
-(circuit-outputs circuit-complex-xor-nand) ; '(OUTA OUTB)
-
+(circuit-outputs circuit-complex-xor-nand) ; => '(OUTA OUTB)
