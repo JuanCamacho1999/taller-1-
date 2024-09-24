@@ -4,6 +4,14 @@
 ;; Representación de Circuitos usando Procedimientos
 ;; -----------------------------------------------------------
 
+;; <chip-prim> := prim-or | prim-and | prim-not | prim-xor | prim-nand | prim-nor | prim-xnor
+;; <circuito> := simple-circuit (<lista-de-puertos> <lista-de-puertos> <chip-prim>)
+;;              | complex-circuit (<lista-de-puertos> <lista-de-puertos> {<circuito>}+)
+
+;; Proposito:
+;; Este código define la representación de chips y circuitos utilizando procedimientos (funciones) en lugar de listas.
+;; Los chips se encapsulan como procedimientos que representan operaciones lógicas.
+
 ;; Definición de chips primitivos como procedimientos
 (define (chip-or) 
   (lambda () 'prim-or))
