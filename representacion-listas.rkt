@@ -1,5 +1,4 @@
 #lang racket
-
 ;; -----------------------------------------------------------
 ;; Representación de Circuitos usando Listas
 ;; -----------------------------------------------------------
@@ -47,45 +46,40 @@
   (cadddr circuit))
 
 ;; -----------------------------------------------------------
+;; Función para obtener las salidas de un circuito
+;; -----------------------------------------------------------
+
+(define (obtener-salidas circuit)
+  (cond
+    ;; Si es un circuito simple, devolvemos las salidas directamente.
+    [(simple-circuit? circuit) (circuit-outputs circuit)]
+    
+    ;; Si es un circuito complejo, combinamos las salidas del circuito complejo con las de los subcircuitos.
+    [(complex-circuit? circuit)
+     (append (circuit-outputs circuit)
+             (apply append (map obtener-salidas (cadddr circuit))))]))
+
+;; -----------------------------------------------------------
 ;; Ejemplos de prueba
 ;; -----------------------------------------------------------
 
 ;; Ejemplo 1: XOR
 (define circuit-xor (simple-circuit '(INA INB) '(OUTA) (chip-xor)))
 
-;; Pruebas del Ejemplo 1
-(simple-circuit? circuit-xor) ; #t
-(circuit-inputs circuit-xor)  ; '(INA INB)
-(circuit-outputs circuit-xor) ; '(OUTA)
-
-
 ;; Ejemplo 2: Circuito NAND con NOT
 (define circuit-nand-not 
   (complex-circuit '(INA INB) '(OUTA OUTB) (list (simple-circuit '(INA INB) '(TEMP) (chip-nand))
                                                  (simple-circuit '(TEMP) '(OUTA) (chip-not)))))
 
-;; Pruebas del Ejemplo 2
-(complex-circuit? circuit-nand-not) ; #t
-(circuit-inputs circuit-nand-not) ; '(INA INB)
-
-
 ;; Ejemplo 3: Mega AND con múltiples salidas
 (define circuit-mega-and
   (simple-circuit '(INA INB INC) '(OUTA OUTB OUTC) (chip-and)))
-
-;; Pruebas del Ejemplo 3
-(circuit-outputs circuit-mega-and) ; '(OUTA OUTB OUTC)
-
 
 ;; Ejemplo 4: NOR con múltiples capas
 (define circuit-nor 
   (complex-circuit '(INA INB INC) '(OUTA) 
                    (list (simple-circuit '(INA INB) '(TEMP1) (chip-nor))
                          (simple-circuit '(TEMP1 INC) '(OUTA) (chip-nor)))))
-
-;; Pruebas del Ejemplo 4
-(complex-circuit? circuit-nor) ; #t
-
 
 ;; Ejemplo 5: XOR y AND juntos
 (define circuit-combo
@@ -94,5 +88,21 @@
                          (simple-circuit '(TEMP1 INC) '(OUTA) (chip-and))
                          (simple-circuit '(INC IND) '(OUTB) (chip-or)))))
 
-;; Pruebas del Ejemplo 5
-(complex-circuit? circuit-combo) ; #t
+;; -----------------------------------------------------------
+;; Pruebas para mostrar las salidas
+;; -----------------------------------------------------------
+
+(displayln "Salidas de circuit-xor (Ejemplo 1):")
+(displayln (obtener-salidas circuit-xor))
+
+(displayln "Salidas de circuit-nand-not (Ejemplo 2):")
+(displayln (obtener-salidas circuit-nand-not))
+
+(displayln "Salidas de circuit-mega-and (Ejemplo 3):")
+(displayln (obtener-salidas circuit-mega-and))
+
+(displayln "Salidas de circuit-nor (Ejemplo 4):")
+(displayln (obtener-salidas circuit-nor))
+
+(displayln "Salidas de circuit-combo (Ejemplo 5):")
+(displayln (obtener-salidas circuit-combo))

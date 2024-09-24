@@ -1,17 +1,15 @@
 #lang racket
-
 ;; -----------------------------------------------------------
 ;; Representación de Circuitos usando define-datatype
 ;; -----------------------------------------------------------
 
 ;; <chip-prim> := prim-or | prim-and | prim-not | prim-xor | prim-nand | prim-nor | prim-xnor
-;; <circuito> := simple-circuit (<lista-de-puertos> <lista-de-puertos> <chip-prim>)
+;; <circuito> := simple-circuit (<lista-de-puertos> <lista-de-puertos> <chip-prim>)  porque este codigo imrpime #t 
 ;;              | complex-circuit (<lista-de-puertos> <lista-de-puertos> {<circuito>}+)
 
 ;; Proposito:
-;; Este código implementa un TAD para chips y circuitos digitales utilizando `define-datatype`. 
+;; Este código implementa un TAD para chips y circuitos digitales utilizando define-datatype. 
 ;; Los chips y circuitos se definen formalmente como tipos de datos.
-
 (require racket/match)
 
 ;; Definición del tipo de dato `chip`
@@ -62,10 +60,35 @@
                          (simple-circuit '(r u) '(s) (chip-or))
                          (simple-circuit '(s) '(t) (chip-not)))))
 
+;; -----------------------------------------------------------
+;; Función para obtener las salidas de un circuito
+;; -----------------------------------------------------------
 
-;; Para verificar los ejemplos
-(displayln (simple-circuit? example1))  ;; => #t
-(displayln (complex-circuit? example2)) ;; => #t
-(displayln (complex-circuit? example3)) ;; => #t
-(displayln (complex-circuit? example4)) ;; => #t
-(displayln (complex-circuit? example5)) ;; => #t
+(define (obtener-salidas circuito)
+  (match circuito
+    ;; Para un circuito simple, devolvemos sus salidas directamente.
+    [(simple-circuit _ outputs _) outputs]
+
+    ;; Para un circuito complejo, recolectamos las salidas de todos los subcircuitos y las combinamos con las salidas del circuito complejo.
+    [(complex-circuit _ outputs subcircuits)
+     (append outputs (apply append (map obtener-salidas subcircuits)))]))
+
+;; -----------------------------------------------------------
+;; Ejemplos de prueba para imprimir las salidas
+;; -----------------------------------------------------------
+
+(displayln "Salidas de example1:")
+(displayln (obtener-salidas example1))
+
+(displayln "Salidas de example2:")
+(displayln (obtener-salidas example2))
+
+(displayln "Salidas de example3:")
+(displayln (obtener-salidas example3))
+
+(displayln "Salidas de example4:")
+(displayln (obtener-salidas example4))
+
+(displayln "Salidas de example5:")
+(displayln (obtener-salidas example5))
+

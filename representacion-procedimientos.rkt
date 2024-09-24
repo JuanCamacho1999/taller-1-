@@ -5,7 +5,7 @@
 ;; -----------------------------------------------------------
 
 ;; <chip-prim> := prim-or | prim-and | prim-not | prim-xor | prim-nand | prim-nor | prim-xnor
-;; <circuito> := simple-circuit (<lista-de-puertos> <lista-de-puertos> <chip-prim>)
+;; <circuito> := simple-circuit (<lista-de-puertos> <lista-de-puertos> <chip-prim>)  
 ;;              | complex-circuit (<lista-de-puertos> <lista-de-puertos> {<circuito>}+)
 
 ;; Proposito:
@@ -60,8 +60,8 @@
 (define circuit-xor (simple-circuit '(INA INB) '(OUTA) chip-xor))
 
 ;; Pruebas del Ejemplo 1
-(circuit-inputs circuit-xor)  ; => '(INA INB)
-(circuit-outputs circuit-xor) ; => '(OUTA)
+(define xor-inputs (circuit-inputs circuit-xor))  ; => '(INA INB)
+(define xor-outputs (circuit-outputs circuit-xor)) ; => '(OUTA)
 
 ;; Ejemplo 2: Circuito NAND con NOT
 (define circuit-nand-not
@@ -70,8 +70,8 @@
                          (simple-circuit '(TEMP) '(OUTA) chip-not))))
 
 ;; Pruebas del Ejemplo 2
-(circuit-inputs circuit-nand-not) ; => '(INA INB)
-(circuit-outputs circuit-nand-not) ; => '(OUTA)
+(define nand-not-inputs (circuit-inputs circuit-nand-not)) ; => '(INA INB)
+(define nand-not-outputs (circuit-outputs circuit-nand-not)) ; => '(OUTA)
 
 ;; Ejemplo 3: Circuito NOR en cadena
 (define circuit-nor-chain
@@ -80,7 +80,7 @@
                          (simple-circuit '(TEMP) '(OUTA) chip-nor))))
 
 ;; Pruebas del Ejemplo 3
-(circuit-outputs circuit-nor-chain) ; => '(OUTA)
+(define nor-chain-outputs (circuit-outputs circuit-nor-chain)) ; => '(OUTA)
 
 ;; Ejemplo 4: Combinación de AND, XOR y OR
 (define circuit-combo
@@ -90,15 +90,41 @@
                          (simple-circuit '(INC IND) '(OUTB) chip-or))))
 
 ;; Pruebas del Ejemplo 4
-(circuit-inputs circuit-combo) ; => '(INA INB INC IND)
-(circuit-outputs circuit-combo) ; => '(OUTA OUTB)
+(define combo-inputs (circuit-inputs circuit-combo)) ; => '(INA INB INC IND)
+(define combo-outputs (circuit-outputs circuit-combo)) ; => '(OUTA OUTB)
 
-;; Ejemplo 5: Circuito complejo con XOR y NAND
-(define circuit-complex-xor-nand
-  (complex-circuit '(INA INB INC) '(OUTA OUTB)
+;; Ejemplo 5: Circuito complejo con XOR, NAND y AND
+(define circuit-complex
+  (complex-circuit '(INA INB INC IND) '(OUTA OUTB OUTC)
                    (list (simple-circuit '(INA INB) '(TEMP1) chip-xor)
-                         (simple-circuit '(TEMP1 INC) '(OUTA) chip-nand)
-                         (simple-circuit '(TEMP1) '(OUTB) chip-nand))))
+                         (simple-circuit '(TEMP1 INC) '(TEMP2) chip-nand)
+                         (simple-circuit '(TEMP2 IND) '(OUTA) chip-and)
+                         (simple-circuit '(INC IND) '(OUTB) chip-or)
+                         (simple-circuit '(INA) '(OUTC) chip-not))))
 
 ;; Pruebas del Ejemplo 5
-(circuit-outputs circuit-complex-xor-nand) ; => '(OUTA OUTB)
+(define complex-inputs (circuit-inputs circuit-complex)) ; => '(INA INB INC IND)
+(define complex-outputs (circuit-outputs circuit-complex)) ; => '(OUTA OUTB OUTC)
+
+;; Mostrar resultados
+(define (print-example-results)
+  (displayln "Ejemplo 1: Circuito XOR")
+  (displayln (format "Entradas: ~a" xor-inputs))
+  (displayln (format "Salidas: ~a" xor-outputs))
+  
+  (displayln "\nEjemplo 2: Circuito NAND con NOT")
+  (displayln (format "Entradas: ~a" nand-not-inputs))
+  (displayln (format "Salidas: ~a" nand-not-outputs))
+  
+  (displayln "\nEjemplo 3: Circuito NOR en cadena")
+  (displayln (format "Salidas: ~a" nor-chain-outputs))
+  
+  (displayln "\nEjemplo 4: Combinación de AND, XOR y OR")
+  (displayln (format "Entradas: ~a" combo-inputs))
+  (displayln (format "Salidas: ~a" combo-outputs))
+  
+  (displayln "\nEjemplo 5: Circuito complejo con XOR, NAND y AND")
+  (displayln (format "Entradas: ~a" complex-inputs))
+  (displayln (format "Salidas: ~a" complex-outputs)))
+
+(print-example-results)
